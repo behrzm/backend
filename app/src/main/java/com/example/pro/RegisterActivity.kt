@@ -5,35 +5,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.auth.api.signin.*
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 class RegisterActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
-
-    private val googleLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            val account = task.result
-
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-
-            auth.signInWithCredential(credential)
-                .addOnSuccessListener {
-                    startActivity(Intent(this, MainActivity::class.java))
-                    finish()
-                }
-                .addOnFailureListener {
-                    it.printStackTrace()
-                }
-        }
+    private lateinit var googleClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // 🔥 ОБЯЗАТЕЛЬНО
+        FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -41,29 +27,46 @@ class RegisterActivity : ComponentActivity() {
             .requestEmail()
             .build()
 
-        val googleClient = GoogleSignIn.getClient(this, gso)
+        googleClient = GoogleSignIn.getClient(this, gso)
 
-        setContent {
-            RegisterScreen(
-                onRegisterClick = { email, password ->
-                    auth.createUserWithEmailAndPassword(email, password)
+        val googleLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+                try {
+                    val account = task.getResult(Exception::class.java)
+                    val credential =
+                        GoogleAuthProvider.getCredential(account.idToken, null)
+
+                    auth.signInWithCredential(credential)
                         .addOnSuccessListener {
-                            startActivity(Intent(this, MainActivity::class.java))
+                            startActivity(
+                                Intent(this, MainActivity::class.java)
+                            )
                             finish()
                         }
                         .addOnFailureListener {
                             it.printStackTrace()
                         }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        setContent {
+            RegisterScreen(
+                onRegisterClick = { _, _ -> },
+                onLoginClick = {
+                    startActivity(Intent(this, LoginActivity::class.java))
                 },
                 onGoogleClick = {
-                    googleClient.signOut()
-                    googleLauncher.launch(googleClient.signInIntent)
+                    // 🔥 КЛЮЧЕВО: очищаем старую Google-сессию
+                    googleClient.signOut().addOnCompleteListener {
+                        googleLauncher.launch(googleClient.signInIntent)
+                    }
                 },
                 onPhoneClick = {
                     startActivity(Intent(this, PhoneAuthActivity::class.java))
-                },
-                onLoginClick = {
-                    startActivity(Intent(this, LoginActivity::class.java))
                 }
             )
         }
