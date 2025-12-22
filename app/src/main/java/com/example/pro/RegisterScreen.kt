@@ -18,7 +18,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun RegisterScreen(
     onRegisterClick: (email: String, password: String) -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onGoogleClick: () -> Unit,
+    onPhoneClick: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -29,105 +31,167 @@ fun RegisterScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF2F2F2))
+            .background(Color(0xFF0D47A1))
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(70.dp))
 
         Text(
-            text = "Create account",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
+            text = "CodLey",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Register to start learning",
+            text = "Create your account",
             fontSize = 16.sp,
-            color = Color.Gray,
+            color = Color(0xFFBBDEFB),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it.lowercase() },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (error.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(text = error, color = Color.Red)
-        }
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        Button(
-            enabled = !loading,
-            onClick = {
-                loading = true
-                error = when {
-                    email.isBlank() -> {
-                        loading = false
-                        "Email is empty"
-                    }
-                    password.length < 6 -> {
-                        loading = false
-                        "Password must be at least 6 characters"
-                    }
-                    password != confirmPassword -> {
-                        loading = false
-                        "Passwords do not match"
-                    }
-                    else -> {
-                        onRegisterClick(email, password)
-                        ""
-                    }
-                }
-            },
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(55.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF3A79FF)
-            )
+                .background(Color.White, RoundedCornerShape(24.dp))
+                .padding(20.dp)
         ) {
-            Text("Register", fontSize = 18.sp)
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it.lowercase() },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !loading
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !loading
+            )
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirm password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !loading
+            )
+
+            if (error.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(error, color = Color.Red, fontSize = 14.sp)
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Button(
+                enabled = !loading,
+                onClick = {
+                    error = when {
+                        email.isBlank() -> "Email is empty"
+                        password.length < 6 -> "Password must be at least 6 characters"
+                        password != confirmPassword -> "Passwords do not match"
+                        else -> {
+                            loading = true
+                            onRegisterClick(email, password)
+                            ""
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1565C0)
+                )
+            ) {
+                if (loading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(22.dp)
+                    )
+                } else {
+                    Text("Register", fontSize = 18.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // ───── OR DIVIDER ─────
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Divider(modifier = Modifier.weight(1f))
+                Text(
+                    text = "OR",
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = Color.Gray,
+                    fontSize = 12.sp
+                )
+                Divider(modifier = Modifier.weight(1f))
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OutlinedButton(
+                enabled = !loading,
+                onClick = { onGoogleClick() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text(
+                    text = "Continue with Google",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            OutlinedButton(
+                onClick = onPhoneClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                shape = RoundedCornerShape(14.dp)
+            ) {
+                Text(
+                    text = "Continue with phone",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Row {
-            Text("Already have an account? ")
+            Text("Already have an account? ", color = Color.White)
             Text(
                 text = "Login",
-                color = Color(0xFF3A79FF),
+                color = Color(0xFFBBDEFB),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable { onLoginClick() }
             )

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">pro</string>
+    <string name="default_web_client_id">
+        585069640902-ka7ivb6m49odqc9mg6jplll3nj8aae7c.apps.googleusercontent.com
+    </string>
+
 </resources>

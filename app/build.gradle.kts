@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -73,4 +74,13 @@ dependencies {
 
     // Activity Compose (нужен для setContent)
     implementation ("androidx.activity:activity-compose:1.9.0")
+
+    // Firebase BoM (версии НЕ указываем)
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+
+    // 🔐 АВТОРИЗАЦИЯ
+    implementation("com.google.firebase:firebase-auth")
+
+    // 🔑 GOOGLE SIGN-IN
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
 }
