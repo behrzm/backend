@@ -8,10 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -24,86 +24,140 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF2F2F2))
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(
+                Brush.verticalGradient(
+                    listOf(
+                        Color(0xFF1D2671),
+                        Color(0xFF3A7BD5)
+                    )
+                )
+            )
+            .padding(24.dp)
     ) {
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Text(
-            text = "Welcome back",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = "Welcome back 👋",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
 
-        Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = "Login to continue learning",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            textAlign = TextAlign.Center
-        )
+            Text(
+                text = "Sign in to continue your journey",
+                color = Color.White.copy(alpha = 0.8f)
+            )
 
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it.lowercase() },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
+            Card(
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White.copy(alpha = 0.15f)
+                )
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+                    // EMAIL
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it.lowercase() },
+                        placeholder = {
+                            Text(
+                                "Email",
+                                color = Color.White.copy(alpha = 0.6f)
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.White
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.White.copy(alpha = 0.6f),
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                            cursorColor = Color.White,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
+                    Spacer(modifier = Modifier.height(14.dp))
 
-        if (error.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(text = error, color = Color.Red)
-        }
+                    // PASSWORD
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        placeholder = {
+                            Text(
+                                "Password",
+                                color = Color.White.copy(alpha = 0.6f)
+                            )
+                        },
+                        visualTransformation = PasswordVisualTransformation(),
+                        modifier = Modifier.fillMaxWidth(),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.White
+                        ),
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color.White.copy(alpha = 0.6f),
+                            unfocusedBorderColor = Color.White.copy(alpha = 0.3f),
+                            cursorColor = Color.White,
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent
+                        )
+                    )
 
-        Spacer(modifier = Modifier.height(30.dp))
+                    if (error.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = error,
+                            color = Color(0xFFFF6B6B),
+                            fontSize = 13.sp
+                        )
+                    }
 
-        Button(
-            onClick = {
-                error = when {
-                    email.isBlank() -> "Email is empty"
-                    password.isBlank() -> "Password is empty"
-                    else -> {
-                        onLoginClick(email, password)
-                        ""
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Button(
+                        onClick = {
+                            error = when {
+                                email.isBlank() -> "Email is empty"
+                                password.isBlank() -> "Password is empty"
+                                else -> {
+                                    onLoginClick(email, password)
+                                    ""
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(52.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF6A5ACD)
+                        )
+                    ) {
+                        Text("Login", fontSize = 16.sp)
                     }
                 }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(55.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFF3A79FF)
-            )
-        ) {
-            Text("Login", fontSize = 18.sp)
-        }
+            }
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
-        Row {
-            Text("Don’t have an account? ")
             Text(
-                text = "Register",
-                color = Color(0xFF3A79FF),
+                text = "Create new account",
+                color = Color.White.copy(alpha = 0.9f),
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.clickable { onRegisterClick() }
             )

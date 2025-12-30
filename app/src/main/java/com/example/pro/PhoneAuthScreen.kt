@@ -1,14 +1,18 @@
 package com.example.pro
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
@@ -19,13 +23,12 @@ fun PhoneAuthScreen(
 ) {
     var phone by remember { mutableStateOf("") }
     var code by remember { mutableStateOf("") }
-    var step by remember { mutableStateOf(1) }
 
-    // ⏱ таймер
+    val step by PhoneAuthUiState.step
+
     var timeLeft by remember { mutableStateOf(60) }
     var canResend by remember { mutableStateOf(false) }
 
-    // ⏱ запуск таймера
     LaunchedEffect(step) {
         if (step == 2) {
             timeLeft = 60
@@ -38,78 +41,86 @@ fun PhoneAuthScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(
+                Brush.verticalGradient(
+                    listOf(Color(0xFF141E30), Color(0xFF243B55))
+                )
+            )
+            .padding(24.dp)
     ) {
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Text(
-            text = if (step == 1) "Phone verification" else "Enter SMS code",
-            fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        if (step == 1) {
-            // ВВОД НОМЕРА
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("Phone number (+7...)") },
-                modifier = Modifier.fillMaxWidth()
+            Text(
+                text = if (step == 1) "Phone Sign In 📱" else "Verify Code 🔐",
+                fontSize = 26.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    onSendCode(phone)
-                    step = 2
-                },
-                modifier = Modifier.fillMaxWidth()
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(26.dp)
             ) {
-                Text("Send code")
-            }
+                Column(Modifier.padding(20.dp)) {
 
-        } else {
-            // ВВОД SMS
-            OutlinedTextField(
-                value = code,
-                onValueChange = { code = it },
-                label = { Text("SMS code") },
-                modifier = Modifier.fillMaxWidth()
-            )
+                    if (step == 1) {
+                        OutlinedTextField(
+                            value = phone,
+                            onValueChange = { phone = it },
+                            label = { Text("Phone number (+7...)") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = { onVerifyCode(code) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Verify")
-            }
+                        Button(
+                            onClick = { onSendCode(phone) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Send code")
+                        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    } else {
+                        OutlinedTextField(
+                            value = code,
+                            onValueChange = { code = it },
+                            label = { Text("SMS code") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-            if (!canResend) {
-                Text(
-                    text = "Resend code in $timeLeft s",
-                    color = Color.Gray
-                )
-            } else {
-                Text(
-                    text = "Resend SMS",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.clickable {
-                        onResendCode(phone)
-                        timeLeft = 60
-                        canResend = false
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        Button(
+                            onClick = { onVerifyCode(code) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Verify")
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        if (!canResend) {
+                            Text("Resend in $timeLeft s", color = Color.Gray)
+                        } else {
+                            Text(
+                                "Resend SMS",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.clickable {
+                                    onResendCode(phone)
+                                }
+                            )
+                        }
                     }
-                )
+                }
             }
         }
     }

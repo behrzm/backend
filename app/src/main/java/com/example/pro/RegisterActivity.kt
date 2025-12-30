@@ -18,12 +18,11 @@ class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 🔥 ОБЯЗАТЕЛЬНО
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestIdToken(getString(R.string.default_web_client_id)) // 🔥 WEB CLIENT ID
             .requestEmail()
             .build()
 
@@ -31,21 +30,25 @@ class RegisterActivity : ComponentActivity() {
 
         val googleLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode != RESULT_OK) return@registerForActivityResult
+
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+
                 try {
                     val account = task.getResult(Exception::class.java)
-                    val credential =
-                        GoogleAuthProvider.getCredential(account.idToken, null)
+
+                    val credential = GoogleAuthProvider.getCredential(
+                        account.idToken,
+                        null
+                    )
 
                     auth.signInWithCredential(credential)
                         .addOnSuccessListener {
-                            startActivity(
-                                Intent(this, MainActivity::class.java)
-                            )
+                            startActivity(Intent(this, MainActivity::class.java))
                             finish()
                         }
                         .addOnFailureListener {
-                            it.printStackTrace()
+                            it.printStackTrace() // ← ТУТ у тебя была ошибка
                         }
 
                 } catch (e: Exception) {
@@ -60,9 +63,10 @@ class RegisterActivity : ComponentActivity() {
                     startActivity(Intent(this, LoginActivity::class.java))
                 },
                 onGoogleClick = {
-                    // 🔥 КЛЮЧЕВО: очищаем старую Google-сессию
-                    googleClient.signOut().addOnCompleteListener {
-                        googleLauncher.launch(googleClient.signInIntent)
+                    googleClient.revokeAccess().addOnCompleteListener {
+                        googleClient.signOut().addOnCompleteListener {
+                            googleLauncher.launch(googleClient.signInIntent)
+                        }
                     }
                 },
                 onPhoneClick = {
