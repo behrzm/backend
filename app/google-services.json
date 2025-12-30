@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "585069640902",
+    "project_id": "diplomaproject-8ab62",
+    "storage_bucket": "diplomaproject-8ab62.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:585069640902:android:2ca9c49ff635687160ebc7",
+        "android_client_info": {
+          "package_name": "com.example.pro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "585069640902-njceonthh4vhajfmmh347usbvs61o7el.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pro",
+            "certificate_hash": "7626b82f566a279dcb19d3f3d2e6c06766f4a6bf"
+          }
+        },
+        {
+          "client_id": "585069640902-ka7ivb6m49odqc9mg6jplll3nj8aae7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQDjuvOtc8TRe2BLrcaHZp7jIKFV6Hzz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "585069640902-ka7ivb6m49odqc9mg6jplll3nj8aae7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
