@@ -1,5 +1,6 @@
 package com.example.pro.screens
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.pro.viewmodel.ChallengeViewModel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -85,7 +87,19 @@ fun HomeScreen() {
         }
     }
 }
+@Composable
+fun HomeScreen( viewModel: ChallengeViewModel = viewModel()){
+    LaunchedEffect(Unit) {
+        viewModel.loadChallenges()
+    }
 
+    val challenges = viewModel.challenges
+
+    // ПОКА просто проверка
+    challenges.forEach {
+        println("CHALLENGE FROM BACKEND: ${it.title}")
+    }
+}
 @Composable
 private fun CourseCard(course: Course) {
 

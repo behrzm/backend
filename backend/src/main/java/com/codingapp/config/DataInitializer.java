@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final ChallengeRepository challengeRepository;
-    private final UserRepository userRepository;
+    private final UserRepository userRepository;    
 
     @Override
     public void run(String... args) {

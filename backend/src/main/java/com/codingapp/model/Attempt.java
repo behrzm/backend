@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UuidGenerator;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "attempts")
@@ -13,9 +16,10 @@ import java.time.LocalDateTime;
 public class Attempt {
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
+    @UuidGenerator
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
+    private UUID id;
+
 
     @Column(name = "user_id", nullable = false)
     private String userId;
@@ -34,4 +38,8 @@ public class Attempt {
 
     @Column(name = "submitted_at")
     private LocalDateTime submittedAt = LocalDateTime.now();
+
+    public Boolean getPassed() {
+        return passed;
+    }
 }
